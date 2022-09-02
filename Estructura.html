@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+</head>
+<style>
+    .entradas {
+        border-color: black;
+        border-style: solid;
+        border-radius: 20px;
+        width: 400px;
+        padding: 6px;
+        display: inline-block;
+    }
+    
+    .boton {
+        border-radius: 10px;
+        border-style: solid;
+        text-align: center;
+        padding: 6px;
+        font-style: inline-block;
+    }
+    
+    .mostrados {
+        border-radius: 10px;
+        border-style: solid;
+        border-color: rgb(0, 0, 0);
+        background-color: rgb(0, 0, 0);
+        padding: 6px;
+        font-style: inline-block;
+    }
+    
+    .c {
+        background-color: rgb(82,82,82);
+        border-color: rgb(0, 0, 0);
+    }
+    
+    .b {
+        background-color: rgb(161, 161, 161);
+        border-color: rgb(0, 0, 0);
+    }
+    
+    .a {
+        background-color: rgb(201, 201, 201);
+        border-color: rgb(0, 0, 0);
+    }
+    
+    .cajas {
+        border-color: rgb(0, 0, 0);
+        font-style: italic;
+        font-weight: 400;
+    }
+</style>
+
+<body>
+    <section>
+        <form>
+            <label for="Cod" class="cajas">CODIGO:  <input type="Number" id="Cod" class="cajas"></label><br><br>
+            <label for="Nom" class="cajas">NOMBRE:  <input type="Text" id="Nom" class="cajas"></label><br><br>
+            <label for="Can" class="cajas">CANTIDAD:  <input type="Number" id="Can" class="cajas"></label><br><br>
+            <label for="Pre" class="cajas">PRECIO:  <input type="Number" id="Pre" class="cajas"></label><br><br>
+
+            <button class="boton a" type="button" id="BtnAdd">AGREGAR</button>
+            <button class="boton b" type="button" id="BtnListInOrder">LISTAR INORDER </button>
+            <button class="boton b" type="button" id="BtnListPreOrder">LISTAR PREORDER </button>
+            <button class="boton b" type="button" id="BtnListPosOrder">LISTAR POSORDER</button>
+            <button class="boton a" type="button" id="BtnFind">BUSCAR </button>
+            <button class="boton c" type="reset">CANCELAR</button>
+        </form>
+    </section>
+    <script>
+        class Producto {
+            constructor(codigo, nombre, cantidad, precio) {
+                this.codigo = codigo;
+                this.nombre = nombre;
+                this.cantidad = cantidad;
+                this.precio = precio;
+                this.hijoizquierdo = null;
+                this.hijoderecho = null;
+            }
+        }
+
+
+        class BinaryTree {
+            constructor() {
+                this.raiz = null;
+            }
+
+            agregar(nuevo) {
+                if (this.raiz == null)
+                    this.raiz = nuevo;
+                else
+                    this.agregate(nuevo, this.raiz);
+            }
+
+            agregate(nuevo, nodox) {
+                if (nuevo.codigo < nodox.codigo)
+                    if (nodox.hijoizquierdo == null)
+                        nodox.hijoizquierdo = nuevo;
+                    else
+                        this.agregate(nuevo, nodox.hijoizquierdo);
+
+                else
+                if (nodox.hijoderecho == null)
+                    nodox.hijoderecho = nuevo;
+                else
+                    this.agregate(nuevo, nodox.hijoderecho);
+            }
+            inOrder() {
+                if (this.raiz == null)
+                    return "";
+                else
+                    return this.inOrderRec(this.raiz);
+            }
+            inOrderRec(nodox) {
+                let info = "";
+                if (nodox.hijoizquierdo != null)
+                    info += this.inOrderRec(nodox.hijoizquierdo);
+                info += 'Codigo del Producto' + nodox.codigo + "<br>";
+                if (nodox.hijoderecho != null)
+                    info += this.inOrderRec(nodox.hijoderecho);
+                return info;
+            }
+            PreOrder() {
+                if (this.raiz == null) {
+                    return "";
+                } else
+                    return this.PreOrderRec(this.raiz);
+            }
+
+            PreOrderRec(nodox) {
+                let info = nodox.codigo;
+                if (nodox.hijoizquierdo != null) {
+                    info += 'Codigo del Producto' + this.PreOrderRec(nodox.hijoizquierdo);
+                }
+                if (nodox.hijoderecho != null) {
+                    info += 'Codigo del Producto' + this.PreOrderRec(nodox.hijoderecho);
+                }
+                return info;
+            }
+            PosOrder() {
+                if (this.raiz == null) {
+                    return "";
+                } else {
+                    return this.PosOrderRec(this.raiz);
+                }
+            }
+
+            PosOrderRec(nodox) {
+                let info = "";
+                if (nodox.hijoizquierdo != null) {
+                    info += this.PosOrderRec(nodox.hijoizquierdo) + 'Codigo del Producto';
+                }
+                if (nodox.hijoderecho != null) {
+                    info += this.PosOrderRec(nodox.hijoderecho) + 'Codigo del Producto';
+                }
+                info += nodox.codigo;
+                return info;
+            }
+            Buscar(codigo, nodox = this.raiz) {
+                while (nodox != null) {
+                    if (nodox.codigo === codigo)
+                        return nodox;
+
+                    if (codigo < nodox.codigo) {
+                        return this.Buscar(codigo, nodox = nodox.hijoizquierdo)
+                    }
+                    if (codigo > nodox.codigo) {
+                        return this.Buscar(codigo, nodox = nodox.hijoderecho)
+                    }
+                }
+                return null;
+            }
+        }
+
+
+
+        let lista = new BinaryTree();
+        const BtnAdd = document.getElementById('BtnAdd');
+        BtnAdd.addEventListener('click', () => {
+            let codigo = Number(document.getElementById('Cod').value);
+            let nombre = document.getElementById('Nom').value;
+            let precio = document.getElementById('Pre').value;
+            let cantidad = document.getElementById('Can').value;
+
+            let nuevo = new Producto(codigo, nombre, cantidad, precio);
+            lista.agregar(nuevo);
+            console.log(lista);
+            let detalles = document.getElementById('detalles');
+            detalles.innerHTML += '<p>Se agrego el producto al registro ' + codigo + '</p>';
+
+            document.getElementById('Cod').value = '';
+            document.getElementById('Can').value = '';
+            document.getElementById('Pre').value = '';
+            document.getElementById('Nom').value = '';
+
+        });
+        const BtnListInOrder = document.getElementById('BtnListInOrder');
+        BtnListInOrder.addEventListener('click', () => {
+            let detalles = document.getElementById('lista');
+            lista.inOrder();
+            detalles.innerHTML += lista.inOrder();
+        });
+        const BtnListPreOrder = document.getElementById('BtnListPreOrder');
+        BtnListPreOrder.addEventListener('click', () => {
+            let detalles = document.getElementById('lista');
+            lista.PreOrder();
+            detalles.innerHTML += lista.PreOrder() + '<br>';
+        });
+        const BtnListPosOrder = document.getElementById('BtnListPosOrder');
+        BtnListPosOrder.addEventListener('click', () => {
+            let detalles = document.getElementById('lista');
+            lista.PosOrder();
+            detalles.innerHTML += lista.PosOrder() + '<br>';
+        });
+        const BtnFind = document.getElementById('BtnFind');
+        BtnFind.addEventListener('click', () => {
+            let codigo = Number(document.getElementById('Cod').value);
+            let detalles = document.getElementById('lista');
+            let buscado = lista.Buscar(codigo);
+            if (buscado == null) {
+                detalles.innerHTML += 'No se encontro en el registro' + '<br>' + '<br>';
+            } else {
+                detalles.innerHTML += 'Si se encontro en el registro: ' + codigo + '<br>' + 'Informacion:' + '<br>' + 'Nombre:' + buscado.nombre + '<br>' +
+                    'Cantidad: ' + buscado.cantidad + '<br>' + 'Precio: ' + buscado.precio + '<br>' + '<br>';
+            }
+
+
+
+
+        });
+    </script>
+    <div id="detalles">
+        <p>DETALLES DE LOS REGISTROS</p>
+    </div>
+    <div id="lista">
+        <P>LISTA DE REGISTROS</P>
+    </div>
+</body>
+
+</html>
